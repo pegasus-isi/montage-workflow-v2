@@ -4,7 +4,7 @@ set -e
 
 export PYTHONPATH=`pegasus-config --python`:$PYTHONPATH
 
-if ! which mProject >/dev/null 2>&1; then
+if ! which mViewer >/dev/null 2>&1; then
     echo "Error: Unable to find the Montage tools in your path. Please download and" 1>&2
     echo "       install version 4 or above (http://montage.ipac.caltech.edu)" 1>&2
     exit 1
@@ -16,7 +16,7 @@ if [ ! -e montage-workflow.py ]; then
 fi
 rm -rf data
 
-./montage-workflow.py --center "56.5 23.75" --degrees 1.0 --band dss:DSS2B:blue --band dss:DSS2R:green --band dss:DSS2IR:red
+./montage-workflow.py --center "56.7 24.00" --degrees 2.0 --band dss:DSS2B:blue --band dss:DSS2R:green --band dss:DSS2IR:red
 
 pegasus-plan \
         --dir work \

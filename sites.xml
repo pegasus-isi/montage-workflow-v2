@@ -7,9 +7,11 @@
         <directory type="local-storage" path="${PWD}/work/outputs">
             <file-server operation="all" url="file://${PWD}/work/outputs"/>
         </directory>
+        <profile namespace="env" key="http_proxy" >workflow.isi.edu:3128</profile>
     </site>
     <site  handle="condor_pool" arch="x86_64" os="LINUX">
         <profile namespace="pegasus" key="style" >condor</profile>
+        <profile namespace="env" key="http_proxy" >workflow.isi.edu:3128</profile>
     </site>
 </sitecatalog>
 

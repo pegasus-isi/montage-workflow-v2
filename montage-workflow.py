@@ -101,8 +101,31 @@ def generate_region_hdr(dax, center, degrees):
     f.close()
 
     common_files["region.hdr"] = File("region.hdr")
-    #dax.addFile(common_files["region.hdr"])
     replica_catalog["region.hdr"] = {"url": "file://" + os.getcwd() + "/data/region.hdr", "site_label": "local"}
+
+    # we also need an oversized region which will be used in the first part of the 
+    # workflow to get the background correction correct
+    f = open("data/region-oversized.hdr", "w")
+    f.write("SIMPLE  = T\n")
+    f.write("BITPIX  = -64\n")
+    f.write("NAXIS   = 2\n")
+    f.write("NAXIS1  = %d\n" %(naxis + 5000))
+    f.write("NAXIS2  = %d\n" %(naxis + 5000))
+    f.write("CTYPE1  = 'RA---TAN'\n")
+    f.write("CTYPE2  = 'DEC--TAN'\n")
+    f.write("CRVAL1  = %.6f\n" %(crval1))
+    f.write("CRVAL2  = %.6f\n" %(crval2))
+    f.write("CRPIX1  = %.6f\n" %(crpix + 2500))
+    f.write("CRPIX2  = %.6f\n" %(crpix + 2500))
+    f.write("CDELT1  = %.9f\n" %(-cdelt))
+    f.write("CDELT2  = %.9f\n" %(cdelt))
+    f.write("CROTA2  = %.6f\n" %(0.0))
+    f.write("EQUINOX = %d\n" %(2000))
+    f.close()
+
+    common_files["region-oversized.hdr"] = File("region-oversized.hdr")
+    replica_catalog["region-oversized.hdr"] = \
+            {"url": "file://" + os.getcwd() + "/data/region-oversized.hdr", "site_label": "local"}
 
 
 def add_band(dax, band_id, center, degrees, survey, band, color):
@@ -114,8 +137,9 @@ def add_band(dax, band_id, center, degrees, survey, band, color):
     print("\nAdding band %s (%s %s -> %s)" %(band_id, survey, band, color))
 
     # data find
+    degrees_datafind = str(float(degrees) + 0.2)
     cmd = "mArchiveList %s %s \"%s\" %s %s data/%s-images.tbl" \
-          %(survey, band, center, degrees, degrees, band_id)
+          %(survey, band, center, degrees_datafind, degrees_datafind, band_id)
     print "Running sub command: " + cmd
     if subprocess.call(cmd, shell=True) != 0:
         print "Command failed!"
@@ -134,7 +158,7 @@ def add_band(dax, band_id, center, degrees, survey, band, color):
     corrected_tbl = File("%s-corrected.tbl" %(band_id))
     replica_catalog[corrected_tbl.name] = \
             {"url": "file://" + os.getcwd() + "/data/" + corrected_tbl.name, "site_label": "local"}
-    cmd = "cd data && mDAGTbls %s-images.tbl region.hdr %s %s %s" \
+    cmd = "cd data && mDAGTbls %s-images.tbl region-oversized.hdr %s %s %s" \
           %(band_id, raw_tbl.name, projected_tbl.name, corrected_tbl.name)
     print "Running sub command: " + cmd
     if subprocess.call(cmd, shell=True) != 0:
@@ -175,11 +199,11 @@ def add_band(dax, band_id, center, degrees, survey, band, color):
         in_fits = File(base_name + ".fits")
         projected_fits = File("p" + base_name + ".fits")
         area_fits = File("p" + base_name + "_area.fits")
-        j.uses(common_files["region.hdr"], link=Link.INPUT)
+        j.uses(common_files["region-oversized.hdr"], link=Link.INPUT)
         j.uses(in_fits, link=Link.INPUT)
-        j.uses(projected_fits, link=Link.OUTPUT)
-        j.uses(area_fits, link=Link.OUTPUT)
-        j.addArguments("-X", in_fits, projected_fits, common_files["region.hdr"])
+        j.uses(projected_fits, link=Link.OUTPUT, transfer=False)
+        j.uses(area_fits, link=Link.OUTPUT, transfer=False)
+        j.addArguments("-X", in_fits, projected_fits, common_files["region-oversized.hdr"])
         dax.addJob(j)
 
     fit_txts = []
@@ -200,10 +224,10 @@ def add_band(dax, band_id, center, degrees, survey, band, color):
         j.uses(plus_area, link=Link.INPUT)
         j.uses(minus, link=Link.INPUT)
         j.uses(minus_area, link=Link.INPUT)
-        j.uses(common_files["region.hdr"], link=Link.INPUT)
-        j.uses(fit_txt, link=Link.OUTPUT, transfer=True)
+        j.uses(common_files["region-oversized.hdr"], link=Link.INPUT)
+        j.uses(fit_txt, link=Link.OUTPUT, transfer=False)
         #j.uses(diff_fits, link=Link.OUTPUT, transfer=True)
-        j.addArguments("-s", fit_txt, plus, minus, diff_fits, common_files["region.hdr"])
+        j.addArguments("-s", fit_txt, plus, minus, diff_fits, common_files["region-oversized.hdr"])
         dax.addJob(j)
         fit_txts.append(fit_txt)
 
@@ -213,7 +237,7 @@ def add_band(dax, band_id, center, degrees, survey, band, color):
     j.uses(stat_tbl, link=Link.INPUT)
     j.addArguments(stat_tbl)
     fits_tbl = File("%s-fits.tbl" %(band_id))
-    j.uses(fits_tbl, link=Link.OUTPUT, transfer=True)
+    j.uses(fits_tbl, link=Link.OUTPUT, transfer=False)
     j.addArguments(fits_tbl)
     for fit_txt in fit_txts:
         j.uses(fit_txt, link=Link.INPUT)
@@ -229,7 +253,7 @@ def add_band(dax, band_id, center, degrees, survey, band, color):
     j.uses(fits_tbl, link=Link.INPUT)
     j.addArguments(fits_tbl)
     corrections_tbl = File("%s-corrections.tbl" %(band_id))
-    j.uses(corrections_tbl, link=Link.OUTPUT, transfer=True)
+    j.uses(corrections_tbl, link=Link.OUTPUT, transfer=False)
     j.addArguments(corrections_tbl)
     dax.addJob(j)
 
@@ -290,7 +314,7 @@ def add_band(dax, band_id, center, degrees, survey, band, color):
     mosaic_jpg = File("%s-mosaic.jpg" %(band_id))
     j.uses(mosaic_fits, link=Link.INPUT)
     j.uses(mosaic_jpg, link=Link.OUTPUT, transfer=True)
-    j.addArguments("-ct", "0", "-gray", mosaic_fits, "min", "max", "gaussianlog", \
+    j.addArguments("-ct", "0", "-gray", mosaic_fits, "0s", "99.999%", "gaussian", \
                    "-out", mosaic_jpg)
     dax.addJob(j)
 
