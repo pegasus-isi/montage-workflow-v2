@@ -4,7 +4,7 @@ A new Python DAX generator version of the classic Montage workflow. This workflo
 toolkit](http://montage.ipac.caltech.edu) to re-project, background correct and add astronomical
 images into custom mosaics.
 
-## How to run?
+## Plan a Montage Workflow
 
 The _./montage-workflow.py_ Python script sets up a _data/_ directory with a Pegasus DAX,
 image tables and region headers. For example:
@@ -19,10 +19,13 @@ looks like:
 
 ![DAX 1](docs/images/dax1.png?raw=true "DAX 1")
 
-The quickest way to get started is to use the _./plan-example.sh_ script. It sets up
-and plans the 2 degree workflow described above. Example:
+## Examples
 
-    $ ./plan-example.sh 
+The quickest way to get started is to use the _./example-dss.sh_ or _./example-2mass.sh_
+scripts. They show how to use the _montage-workflow.py_ DAX generator to set up and plan
+2 degree workflows as described above. Example:
+
+    $ ./example-dss.sh 
     
     Adding band 1 (dss DSS2B -> blue)
     Running sub command: mArchiveList dss DSS2B "56.7 24.00" 2.2 2.2 data/1-images.tbl

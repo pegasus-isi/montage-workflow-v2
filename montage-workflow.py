@@ -137,7 +137,7 @@ def add_band(dax, band_id, center, degrees, survey, band, color):
     print("\nAdding band %s (%s %s -> %s)" %(band_id, survey, band, color))
 
     # data find
-    degrees_datafind = str(float(degrees) + 0.2)
+    degrees_datafind = str(float(degrees) + 1.0)
     cmd = "mArchiveList %s %s \"%s\" %s %s data/%s-images.tbl" \
           %(survey, band, center, degrees_datafind, degrees_datafind, band_id)
     print "Running sub command: " + cmd
