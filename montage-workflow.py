@@ -175,7 +175,8 @@ def add_band(dax, band_id, center, degrees, survey, band, color):
 
     # statfile table
     t = ascii.read("data/%s-diffs.tbl" %(band_id))
-    t['stat'] = ascii.Column([])
+    #t['stat'] = ascii.Column([])
+    t['stat'] = ""
     for row in t:
         base_name = re.sub("(diff\.|\.fits.*)", "", row['diff'])
         row['stat'] = "%s-fit.%s.txt" %(band_id, base_name)
