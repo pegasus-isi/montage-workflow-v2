@@ -4,6 +4,11 @@ A new Python DAX generator version of the classic Montage workflow. This workflo
 toolkit](http://montage.ipac.caltech.edu) to re-project, background correct and add astronomical
 images into custom mosaics.
 
+## Prerequisites
+
+ * [Montage](http://montage.ipac.caltech.edu) - version 4.0 or later
+ * [AstroPy](http://www.astropy.org/) - version 1.0 or later
+
 ## Plan a Montage Workflow
 
 The _./montage-workflow.py_ Python script sets up a _data/_ directory with a Pegasus DAX,
