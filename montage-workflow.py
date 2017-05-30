@@ -373,7 +373,13 @@ def main():
     dax = AutoADAG("montage")
 
     # email notificiations for when the state of the workflow changes
-    dax.invoke('all', os.getcwd() + "/email-notify.sh")
+    share_dir = subprocess.Popen("pegasus-config --sh-dump | grep ^PEGASUS_SHARE_DIR= | sed -e 's/.*=//' -e 's/\"//g'",
+                                 shell=True,
+                                 stdout=subprocess.PIPE).communicate()[0]
+    share_dir = share_dir.strip()
+    dax.invoke('start', share_dir + "/notification/email")
+    dax.invoke('on_error', share_dir + "/notification/email")
+    dax.invoke('on_success', share_dir + "/notification/email --report=pegasus-statistics")
 
     add_transformations(dax)
 
