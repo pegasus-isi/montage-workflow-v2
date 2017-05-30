@@ -50,12 +50,17 @@ def add_transformations(dax):
     Some transformations in Montage uses multiple executables
     """
     exes = {}
-    base_dir = os.path.dirname(which("mProject"))
+    full_path = which("mProject")
+    if full_path is None:
+        raise RuntimeError("mProject is not in the $PATH")
+    base_dir = os.path.dirname(full_path)
     for fname in os.listdir(base_dir):
         if fname[0] == ".":
             continue
         e = Executable(fname, arch = "x86_64", installed = False)
         e.addPFN(PFN("file://" + base_dir + "/" + fname, "local"))
+        if fname in ["mProject", "mDiff", "mDiffFit", "mBackground"]:
+            e.addProfile(Profile(Namespace.PEGASUS, "clusters.size", 5))
         exes[fname] = e
     # only add the ones we actually need
     for tname in ["mProject", "mDiff", "mFitplane", "mDiffFit", \
@@ -78,7 +83,7 @@ def generate_region_hdr(dax, center, degrees):
     crval1 = float(crval1)
     crval2 = float(crval2)
 
-    cdelt = 0.000278
+    cdelt = 0.000277778
     naxis = int((float(degrees) / cdelt) + 0.5)
     crpix = (naxis + 1) / 2.0
 
@@ -98,6 +103,7 @@ def generate_region_hdr(dax, center, degrees):
     f.write("CDELT2  = %.9f\n" %(cdelt))
     f.write("CROTA2  = %.6f\n" %(0.0))
     f.write("EQUINOX = %d\n" %(2000))
+    f.write("END\n")
     f.close()
 
     common_files["region.hdr"] = File("region.hdr")
@@ -109,18 +115,19 @@ def generate_region_hdr(dax, center, degrees):
     f.write("SIMPLE  = T\n")
     f.write("BITPIX  = -64\n")
     f.write("NAXIS   = 2\n")
-    f.write("NAXIS1  = %d\n" %(naxis + 5000))
-    f.write("NAXIS2  = %d\n" %(naxis + 5000))
+    f.write("NAXIS1  = %d\n" %(naxis + 3000))
+    f.write("NAXIS2  = %d\n" %(naxis + 3000))
     f.write("CTYPE1  = 'RA---TAN'\n")
     f.write("CTYPE2  = 'DEC--TAN'\n")
     f.write("CRVAL1  = %.6f\n" %(crval1))
     f.write("CRVAL2  = %.6f\n" %(crval2))
-    f.write("CRPIX1  = %.6f\n" %(crpix + 2500))
-    f.write("CRPIX2  = %.6f\n" %(crpix + 2500))
+    f.write("CRPIX1  = %.6f\n" %(crpix + 1500))
+    f.write("CRPIX2  = %.6f\n" %(crpix + 1500))
     f.write("CDELT1  = %.9f\n" %(-cdelt))
     f.write("CDELT2  = %.9f\n" %(cdelt))
     f.write("CROTA2  = %.6f\n" %(0.0))
     f.write("EQUINOX = %d\n" %(2000))
+    f.write("END\n")
     f.close()
 
     common_files["region-oversized.hdr"] = File("region-oversized.hdr")
@@ -136,8 +143,8 @@ def add_band(dax, band_id, center, degrees, survey, band, color):
 
     print("\nAdding band %s (%s %s -> %s)" %(band_id, survey, band, color))
 
-    # data find
-    degrees_datafind = str(float(degrees) + 1.0)
+    # data find - go a little bit outside the box - see mExec implentation
+    degrees_datafind = str(float(degrees) * 1.42)
     cmd = "mArchiveList %s %s \"%s\" %s %s data/%s-images.tbl" \
           %(survey, band, center, degrees_datafind, degrees_datafind, band_id)
     print "Running sub command: " + cmd

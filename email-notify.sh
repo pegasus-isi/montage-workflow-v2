@@ -15,11 +15,10 @@ EOF
 
 if [ "X$PEGASUS_EVENT" = "Xat_end" ]; then
     echo >>$TMPFILE
-    echo "Output from pegasus-statistics:" >>$TMPFILE
-    echo >>$TMPFILE
-    touch monitord.done
-    pegasus-statistics -q >>$TMPFILE 2>&1
-
+    #echo "Output from pegasus-statistics:" >>$TMPFILE
+    #echo >>$TMPFILE
+    #touch monitord.done
+    #pegasus-statistics -q >>$TMPFILE 2>&1
 else
     echo >>$TMPFILE
     echo "Output from pegasus-status:" >>$TMPFILE
@@ -35,19 +34,19 @@ MAILX_ARGS=""
 if [ "X$PEGASUS_EVENT" = "Xstart" ]; then
     DAG_FS=`du -s -b *-0.dag | awk '{print $1;}'`
     if [ $DAG_FS -lt 1000000 ]; then
-        if [ ! -e dax.png ]; then
+        if [ ! -e dax.svg ]; then
             pegasus-graphviz -o dag.dot *-0.dag
-            /usr/bin/dot -Tpng -odag.png dag.dot
-            if [ -e dag.png ]; then
-                MUTT_APPENDS="$MUTT_APPENDS dag.png"
-                MAILX_ARGS="$MAILX_ARGS -a dag.png"
+            /usr/bin/dot -Tsvg -odag.svg dag.dot
+            if [ -e dag.svg ]; then
+                MUTT_APPENDS="$MUTT_APPENDS dag.svg"
+                MAILX_ARGS="$MAILX_ARGS -a dag.svg"
             fi
         
             pegasus-graphviz -o dax.dot *.dax
-            /usr/bin/dot -Tpng -odax.png dax.dot
-            if [ -e dax.png ]; then
-                MUTT_APPENDS="$MUTT_APPENDS dax.png"
-                MAILX_ARGS="$MAILX_ARGS -a dax.png"
+            /usr/bin/dot -Tsvg -odax.svg dax.dot
+            if [ -e dax.svg ]; then
+                MUTT_APPENDS="$MUTT_APPENDS dax.svg"
+                MAILX_ARGS="$MAILX_ARGS -a dax.svg"
             fi
         fi
     fi
