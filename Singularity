@@ -25,6 +25,7 @@ apt-get update && apt-get install -y \
         pkg-config \
         python \
         python-astropy \
+        python-future \
         python-dev \
         python-pip \
         unzip \
