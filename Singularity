@@ -25,7 +25,7 @@ apt-get update && apt-get install -y \
         
 # pegasus
 wget -O - http://download.pegasus.isi.edu/pegasus/gpg.txt | apt-key add -
-echo 'deb deb http://download.pegasus.isi.edu/wms/download/debian stretch main' >/etc/apt/sources.list.d/pegasus.list
+echo 'deb http://download.pegasus.isi.edu/wms/download/debian stretch main' >/etc/apt/sources.list.d/pegasus.list
 
 apt-get update && apt-get install -y \
     pegasus
