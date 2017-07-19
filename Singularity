@@ -1,6 +1,11 @@
 bootstrap:docker
 From:debian:9
 
+%environment
+
+PATH=/opt/Montage/bin:/usr/bin:/bin
+
+
 %setup
 
 mkdir $SINGULARITY_ROOTFS/opt/montage-workflow-v2

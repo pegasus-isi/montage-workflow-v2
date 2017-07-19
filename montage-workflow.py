@@ -45,7 +45,7 @@ def which(file):
     return None
 
 
-def add_transformations(dax):
+def build_transformation_catalog(tc_target, dax):
     """
     Some transformations in Montage uses multiple executables
     """
@@ -54,24 +54,44 @@ def add_transformations(dax):
     if full_path is None:
         raise RuntimeError("mProject is not in the $PATH")
     base_dir = os.path.dirname(full_path)
+    
+    f = open("data/tc.txt", "w")
+    if tc_target == "container":
+        f.write("cont montage {\n")
+        f.write("   type \"singularity\"\n")
+        f.write("   image \"shub://pegasus-isi/fedora-montage\n")
+        f.write("}\n")
+
     for fname in os.listdir(base_dir):
         if fname[0] == ".":
             continue
-        e = Executable(fname, arch = "x86_64", installed = False)
-        e.addPFN(PFN("file://" + base_dir + "/" + fname, "local"))
+        f.write("\n")
+        f.write("tr %s {\n" %(fname))
+        if tc_target == "regular":
+            f.write("  site local {\n")
+            f.write("    type \"STAGEABLE\"\n")
+            f.write("    arch \"x86_64\"\n")
+            f.write("    pfn \"file://%s/%s\"\n" %(base_dir, fname))
+        else:
+            # container
+            f.write("  site condor_pool {\n")
+            f.write("    type \"INSTALLED\"\n")
+            f.write("    container \"montage\"\n")
+            f.write("    pfn \"file://%s/%s\"\n" %(base_dir, fname))
+
         if fname in ["mProject", "mDiff", "mDiffFit", "mBackground"]:
-            e.addProfile(Profile(Namespace.PEGASUS, "clusters.size", 5))
-        exes[fname] = e
-    # only add the ones we actually need
-    for tname in ["mProject", "mDiff", "mFitplane", "mDiffFit", \
-                  "mConcatFit", "mBgModel", "mBackground", "mImgtbl", \
-                  "mAdd", "mJPEG"]:
+            f.write("    profile pegasus \"clusters.size\" \"5\"\n")
+        f.write("  }\n")
+        f.write("}\n")
+    f.close()
+
+    # some Montage tools depend on other tools
+    for tname in ["mDiffFit"]:
         t = Transformation(tname)
         if tname == "mDiffFit":
-            t.uses(exes["mDiff"])
-            t.uses(exes["mFitplane"])
-        t.uses(exes[tname])
-        dax.addExecutable(exes[tname])
+            t.uses(Executable("mDiff"))
+            t.uses(Executable("mFitplane"))
+        t.uses(Executable("mDiffFit"))
         dax.addTransformation(t)
 
 
@@ -363,7 +383,12 @@ def main():
                         help = "Number of degrees of side of the output")
     parser.add_argument("--band", action = "append", dest = "bands",
                         help = "Band definition. Example: dss:DSS2B:red")
+    parser.add_argument("--tc-target", action = "store", dest = "tc_target",
+                        help = "Transformation catalog: regular or container")
     args = parser.parse_args()
+
+    if args.tc_target is None:
+        args.tc_target = "regular"
 
     if os.path.exists("data"):
         print("data/ directory already exists")
@@ -381,7 +406,7 @@ def main():
     dax.invoke('on_error', share_dir + "/notification/email")
     dax.invoke('on_success', share_dir + "/notification/email --report=pegasus-statistics")
 
-    add_transformations(dax)
+    build_transformation_catalog(args.tc_target, dax)
 
     # region.hdr is the template for the ouput area
     generate_region_hdr(dax, args.center, args.degrees)
