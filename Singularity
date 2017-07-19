@@ -1,12 +1,19 @@
 bootstrap:docker
 From:debian:9
 
+%setup
+
+mkdir $SINGULARITY_ROOTFS/opt/montage-workflow-v2
+cp -a * $SINGULARITY_ROOTFS/opt/montage-workflow-v2/
+
+
 %post
 
 apt-get update && apt-get install -y \
         build-essential \
         curl \
         gfortran \
+        gnupg \
         pkg-config \
         python \
         python-astropy \
@@ -14,7 +21,14 @@ apt-get update && apt-get install -y \
         python-pip \
         unzip \
         vim \
-        wget \
+        wget
+        
+# pegasus
+wget -O - http://download.pegasus.isi.edu/pegasus/gpg.txt | apt-key add -
+echo 'deb deb http://download.pegasus.isi.edu/wms/download/debian stretch main' >/etc/apt/sources.list.d/pegasus.list
+
+apt-get update && apt-get install -y \
+    pegasus
 
 apt-get clean
 rm -rf /var/lib/apt/lists/*
@@ -25,7 +39,4 @@ cd /opt && \
     rm -f Montage_v5.0.tar.gz && \
     cd Montage && \
     make
-
-mkdir $SINGULARITY_ROOTFS/opt/montage-workflow-v2
-cp -a * $SINGULARITY_ROOTFS/opt/montage-workflow-v2/
 
