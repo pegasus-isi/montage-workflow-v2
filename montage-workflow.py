@@ -30,9 +30,9 @@ import sys
 #Insert this directory in our search path
 os.sys.path.insert(0, os.getcwd())
 
+from astropy.io import ascii
 from AutoADAG import *
 from Pegasus.DAX3 import *
-from astropy.io import ascii
 
 common_files = {}
 replica_catalog = {}
@@ -59,11 +59,14 @@ def build_transformation_catalog(tc_target, dax):
     if tc_target == "container":
         f.write("cont montage {\n")
         f.write("   type \"singularity\"\n")
-        f.write("   image \"shub://pegasus-isi/fedora-montage\n")
+        f.write("   image \"shub://pegasus-isi/fedora-montage\"\n")
         f.write("}\n")
 
     for fname in os.listdir(base_dir):
         if fname[0] == ".":
+            continue
+        if fname[0] == "mDiffFit":
+            # special compound transformation - see below
             continue
         f.write("\n")
         f.write("tr %s {\n" %(fname))
