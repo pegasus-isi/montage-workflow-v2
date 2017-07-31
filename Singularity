@@ -31,6 +31,9 @@ apt-get update && apt-get install -y \
         unzip \
         vim \
         wget
+
+# generate locales to avoid annoying warnings later
+locale-gen en_US.UTF-8
         
 # pegasus
 #wget -O - http://download.pegasus.isi.edu/pegasus/gpg.txt | apt-key add -
@@ -49,4 +52,6 @@ cd /opt && \
     rm -f Montage_v5.0.tar.gz && \
     cd Montage && \
     make
+
+
 
