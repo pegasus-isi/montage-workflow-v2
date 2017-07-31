@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
         build-essential \
         curl \
         gfortran \
+        locales \
         pkg-config \
         python \
         python-astropy \

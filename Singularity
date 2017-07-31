@@ -21,6 +21,7 @@ apt-get update && apt-get install -y \
         gnupg \
         libmariadbclient18 \
         libpq5 \
+        locales \
         openjdk-8-jre \
         pkg-config \
         python \
