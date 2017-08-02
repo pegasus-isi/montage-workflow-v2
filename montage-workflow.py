@@ -59,7 +59,7 @@ def build_transformation_catalog(tc_target, dax):
     if tc_target == "container":
         f.write("cont montage {\n")
         f.write("   type \"singularity\"\n")
-        f.write("   image \"shub://pegasus-isi/fedora-montage\"\n")
+        f.write("   image \"shub://pegasus-isi/montage-workflow-v2\"\n")
         f.write("}\n")
 
     for fname in os.listdir(base_dir):
