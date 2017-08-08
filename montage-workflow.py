@@ -60,6 +60,7 @@ def build_transformation_catalog(tc_target, dax):
         f.write("cont montage {\n")
         f.write("   type \"singularity\"\n")
         f.write("   image \"shub://pegasus-isi/montage-workflow-v2\"\n")
+        f.write("   profile env \"MONTAGE_HOME\" \"/opt/Montage\"\n")
         f.write("}\n")
 
     for fname in os.listdir(base_dir):
