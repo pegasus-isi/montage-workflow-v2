@@ -22,6 +22,7 @@ apt-get update && apt-get install -y \
         libmariadbclient18 \
         libpq5 \
         locales \
+        locales-all \
         openjdk-8-jre \
         pkg-config \
         python \
@@ -33,9 +34,6 @@ apt-get update && apt-get install -y \
         vim \
         wget
 
-# generate locales to avoid annoying warnings later
-locale-gen en_US.UTF-8
-        
 # pegasus
 #wget -O - http://download.pegasus.isi.edu/pegasus/gpg.txt | apt-key add -
 #echo 'deb http://download.pegasus.isi.edu/wms/download/debian stretch main' >/etc/apt/sources.list.d/pegasus.list

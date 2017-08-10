@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
         curl \
         gfortran \
         locales \
+        locales-all \
         pkg-config \
         python \
         python-astropy \
@@ -18,9 +19,6 @@ RUN apt-get update && apt-get install -y \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-# generate locales to avoid annoying warnings later
-RUN locale-gen en_US.UTF-8
 
 # install Montage
 RUN cd /opt && \
