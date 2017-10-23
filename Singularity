@@ -35,12 +35,10 @@ apt-get update && apt-get install -y \
         wget
 
 # pegasus
-#wget -O - http://download.pegasus.isi.edu/pegasus/gpg.txt | apt-key add -
-#echo 'deb http://download.pegasus.isi.edu/wms/download/debian stretch main' >/etc/apt/sources.list.d/pegasus.list
-#apt-get update && apt-get install -y \
-#    pegasus
-wget http://download.pegasus.isi.edu/pegasus/4.8.0dev/pegasus_4.8.0dev-1+deb9_amd64.deb
-dpkg -i pegasus_4.8.0dev-1+deb9_amd64.deb
+wget -O - http://download.pegasus.isi.edu/pegasus/gpg.txt | apt-key add -
+echo 'deb http://download.pegasus.isi.edu/wms/download/debian stretch main' >/etc/apt/sources.list.d/pegasus.list
+apt-get update && apt-get install -y \
+    pegasus
 
 apt-get clean
 rm -rf /var/lib/apt/lists/*
@@ -51,6 +49,4 @@ cd /opt && \
     rm -f Montage_v5.0.tar.gz && \
     cd Montage && \
     make
-
-
 
