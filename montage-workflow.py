@@ -259,7 +259,7 @@ def add_band(dax, band_id, center, degrees, survey, band, color):
         j.uses(common_files["region-oversized.hdr"], link=Link.INPUT)
         j.uses(fit_txt, link=Link.OUTPUT, transfer=False)
         #j.uses(diff_fits, link=Link.OUTPUT, transfer=True)
-        j.addArguments("-s", fit_txt, plus, minus, diff_fits, common_files["region-oversized.hdr"])
+        j.addArguments("-d", "-s", fit_txt, plus, minus, diff_fits, common_files["region-oversized.hdr"])
         dax.addJob(j)
         fit_txts.append(fit_txt)
 
