@@ -26,8 +26,8 @@ looks like:
 
 ## Examples
 
-The quickest way to get started is to use the _./example-dss.sh_ or _./example-2mass.sh_
-scripts. They show how to use the _montage-workflow.py_ DAX generator to set up and plan
+The quickest way to get started is to use the _./example-dss.sh_
+script. It shows how to use the _montage-workflow.py_ DAX generator to set up and plan
 2 degree workflows as described above. Example:
 
     $ ./example-dss.sh 
