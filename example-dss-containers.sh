@@ -16,10 +16,13 @@ singularity exec \
             /srv/montage-workflow.py \
                 --tc-target container \
                 --center "56.7 24.00" \
-                --degrees 2.0 \
+                --degrees 1.0 \
                 --band dss:DSS2B:blue \
                 --band dss:DSS2R:green \
                 --band dss:DSS2IR:red
+
+# rc needs to have paths "outside" the image
+perl -p -i -e "s;/srv/data;$PWD/data;g" data/rc.txt
 
 pegasus-plan \
         --dir work \
