@@ -1,0 +1,21 @@
+diff -u -r Montage_v5.0/grid/Pegasus/mDiffFit.c Montage_v5.0_patched_1/grid/Pegasus/mDiffFit.c
+--- Montage_v5.0/grid/Pegasus/mDiffFit.c	2016-12-22 01:40:44.000000000 -0800
++++ Montage_v5.0_patched_1/grid/Pegasus/mDiffFit.c	2017-11-28 11:33:50.007925463 -0800
+@@ -192,7 +192,16 @@
+       fprintf(fstatus, "[struct stat=\"%s\", msg=\"%s\"]\n", status, msg);
+       fflush(stdout);
+ 
+-      exit(1);
++      /* some errors from mDiff are ignored, such as images not overlapping */
++      if (strcmp(msg, "Images don't overlap") == 0 
++          || strcmp(msg, "All pixels are blank.") == 0) {
++          /* ensure the output file exists, even if it is 0 bytes */
++          fopen(output_file, "w+");
++          exit(0);
++      }
++      else {
++          exit(1);
++      }
+    }
+ 
+    if(strcmp( status, "WARNING") == 0)

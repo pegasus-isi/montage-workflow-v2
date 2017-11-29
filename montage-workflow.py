@@ -84,7 +84,7 @@ def build_transformation_catalog(tc_target, dax):
             f.write("    pfn \"file://%s/%s\"\n" %(base_dir, fname))
 
         if fname in ["mProject", "mDiff", "mDiffFit", "mBackground"]:
-            f.write("    profile pegasus \"clusters.size\" \"5\"\n")
+            f.write("    profile pegasus \"clusters.size\" \"3\"\n")
         f.write("  }\n")
         f.write("}\n")
     f.close()
@@ -206,8 +206,8 @@ def add_band(dax, band_id, center, degrees, survey, band, color):
 
     # statfile table
     t = ascii.read("data/%s-diffs.tbl" %(band_id))
-    #t['stat'] = ascii.Column([])
-    t['stat'] = ""
+    # make sure we have a wide enough column
+    t['stat'] = "                                                                  "
     for row in t:
         base_name = re.sub("(diff\.|\.fits.*)", "", row['diff'])
         row['stat'] = "%s-fit.%s.txt" %(band_id, base_name)
