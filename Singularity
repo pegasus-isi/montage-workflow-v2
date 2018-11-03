@@ -1,5 +1,5 @@
 bootstrap:docker
-From:debian:9
+From:centos:7
 
 %environment
 
@@ -14,34 +14,31 @@ cp -a * $SINGULARITY_ROOTFS/opt/montage-workflow-v2/
 
 %post
 
-apt-get update && apt-get install -y \
-        build-essential \
-        curl \
-        gfortran \
-        gnupg \
-        libmariadbclient18 \
-        libpq5 \
-        locales \
-        locales-all \
-        openjdk-8-jre \
-        pkg-config \
-        python \
-        python-astropy \
-        python-future \
-        python-dev \
-        python-pip \
-        unzip \
-        vim \
-        wget
+yum -y upgrade
+yum -y install epel-release yum-plugin-priorities
 
-# pegasus
-wget -O - http://download.pegasus.isi.edu/pegasus/gpg.txt | apt-key add -
-echo 'deb http://download.pegasus.isi.edu/wms/download/debian stretch main' >/etc/apt/sources.list.d/pegasus.list
-apt-get update && apt-get install -y \
-    pegasus
+# osg repo
+yum -y install http://repo.opensciencegrid.org/osg/3.4/osg-3.4-el7-release-latest.rpm
 
-apt-get clean
-rm -rf /var/lib/apt/lists/*
+# pegasus repo
+echo -e "# Pegasus\n[Pegasus]\nname=Pegasus\nbaseurl=http://download.pegasus.isi.edu/wms/download/rhel/7/\$basearch/\ngpgcheck=0\nenabled=1\npriority=50" >/etc/yum.repos.d/pegasus.repo
+
+yum -y install \
+    astropy-tools \
+    gcc \
+    java-1.8.0-openjdk \
+    java-1.8.0-openjdk-devel \
+    osg-ca-certs \
+    osg-wn-client \
+    pegasus \
+    python-astropy \
+    python-future \
+    python-pip \
+    unzip \
+    wget
+
+# Cleaning caches to reduce size of image
+yum clean all
 
 # wget -nv http://montage.ipac.caltech.edu/download/Montage_v5.0.tar.gz 
 cd /opt && \
