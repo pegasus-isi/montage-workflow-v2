@@ -13,13 +13,18 @@ RUN echo -e "# Pegasus\n[Pegasus]\nname=Pegasus\nbaseurl=http://download.pegasus
 
 RUN yum -y install \
     astropy-tools \
+    file \
     gcc \
+    gcc-gfortran \
     java-1.8.0-openjdk \
     java-1.8.0-openjdk-devel \
+    libjpeg-turbo-devel \
+    openjpeg-devel \
     osg-ca-certs \
     osg-wn-client \
     pegasus \
     python-astropy \
+    python-devel \
     python-future \
     python-pip \
     unzip \
@@ -28,12 +33,12 @@ RUN yum -y install \
 # Cleaning caches to reduce size of image
 RUN yum clean all
 
-# wget -nv http://montage.ipac.caltech.edu/download/Montage_v5.0.tar.gz
+# wget -nv http://montage.ipac.caltech.edu/download/Montage_v5.0.tar.gz 
 RUN cd /opt && \
-    wget -nv https://github.com/Caltech-IPAC/Montage/archive/dev.zip && \
-    unzip dev.zip && \
-    rm -f dev.zip && \
-    mv Montage-dev Montage && \
+    wget -nv https://github.com/Caltech-IPAC/Montage/archive/master.zip && \
+    unzip master.zip && \
+    rm -f master.zip && \
+    mv Montage-master Montage && \
     cd Montage && \
     make
 
