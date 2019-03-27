@@ -11,7 +11,7 @@ fi
 rm -rf data
 
 singularity exec \
-            --bind $PWD:/srv --pwd /srv \
+            --home $PWD:/srv --pwd /srv \
             shub://pegasus-isi/montage-workflow-v2 \
             /srv/montage-workflow.py \
                 --tc-target container \
