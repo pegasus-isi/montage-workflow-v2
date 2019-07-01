@@ -11,9 +11,10 @@ fi
 rm -rf data
 
 singularity exec \
-            --home $PWD:/srv --pwd /srv \
+            --bind $PWD:/srv \
             shub://pegasus-isi/montage-workflow-v2 \
             /srv/montage-workflow.py \
+                --work-dir /srv \
                 --tc-target container \
                 --center "56.7 24.00" \
                 --degrees 1.0 \

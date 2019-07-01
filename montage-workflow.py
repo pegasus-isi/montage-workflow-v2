@@ -381,6 +381,8 @@ def main():
 
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("--work-dir", action = "store", dest = "work_dir",
+                        help = "Work directory to chdir to")
     parser.add_argument("--center", action = "store", dest = "center",
                         help = "Center of the output, for example M17 or 56.5 23.75")
     parser.add_argument("--degrees", action = "store", dest = "degrees",
@@ -390,6 +392,9 @@ def main():
     parser.add_argument("--tc-target", action = "store", dest = "tc_target",
                         help = "Transformation catalog: regular or container")
     args = parser.parse_args()
+
+    if args.work_dir:
+        os.chdir(args.work_dir)
 
     if args.tc_target is None:
         args.tc_target = "regular"
