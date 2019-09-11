@@ -45,12 +45,9 @@ yum -y install \
 # Cleaning caches to reduce size of image
 yum clean all
 
-# wget -nv http://montage.ipac.caltech.edu/download/Montage_v5.0.tar.gz 
 cd /opt && \
-    wget -nv https://github.com/Caltech-IPAC/Montage/archive/master.zip && \
-    unzip master.zip && \
-    rm -f master.zip && \
-    mv Montage-master Montage && \
+    wget -nv http://montage.ipac.caltech.edu/download/Montage_v6.0.tar.gz && \
+    tar -zxvf Montage_v6.0.tar.gz && \
+    rm -f Montage_v6.0.tar.gz && \
     cd Montage && \
     make
-
