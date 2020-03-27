@@ -12,15 +12,15 @@ rm -rf data
 
 singularity exec \
             --bind $PWD:/srv \
-            shub://pegasus-isi/montage-workflow-v2 \
+            library://ryantanaka/default/montage-workflow:6.0 \
             /srv/montage-workflow.py \
-                --work-dir /srv \
-                --tc-target container \
-                --center "56.7 24.00" \
-                --degrees 1.0 \
-                --band dss:DSS2B:blue \
-                --band dss:DSS2R:green \
-                --band dss:DSS2IR:red
+            --work-dir /srv \
+            --tc-target container \
+            --center "56.7 24.00" \
+            --degrees 1.0 \
+            --band dss:DSS2B:blue \
+            --band dss:DSS2R:green \
+            --band dss:DSS2IR:red
 
 # rc needs to have paths "outside" the image
 perl -p -i -e "s;/srv/data;$PWD/data;g" data/rc.txt

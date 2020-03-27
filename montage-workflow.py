@@ -59,16 +59,16 @@ def build_transformation_catalog(tc_target, dax):
     if tc_target == "container":
         f.write("cont montage {\n")
         f.write("   type \"singularity\"\n")
-        f.write("   image \"shub://pegasus-isi/montage-workflow-v2\"\n")
+        f.write("   image \"library://ryantanaka/default/montage-workflow:6.0\"\n")
         f.write("   profile env \"MONTAGE_HOME\" \"/opt/Montage\"\n")
         f.write("}\n")
 
     for fname in os.listdir(base_dir):
-        if fname[0] == ".":
+        if fname == ".":
             continue
-        if fname[0] == "mDiffFit":
+        #if fname == "mDiffFit":
             # special compound transformation - see below
-            continue
+        #    continue
         f.write("\n")
         f.write("tr %s {\n" %(fname))
         if tc_target == "regular":
@@ -82,6 +82,10 @@ def build_transformation_catalog(tc_target, dax):
             f.write("    type \"INSTALLED\"\n")
             f.write("    container \"montage\"\n")
             f.write("    pfn \"file://%s/%s\"\n" %(base_dir, fname))
+        
+        # resource requirements
+        f.write("    profile condor \"request_memory\" \"ifthenelse(isundefined(DAGNodeRetry) || DAGNodeRetry == 0, 1024, 4096)\"\n")
+        f.write("    profile condor \"request_disk\" \"5G\"\n")
 
         if fname in ["mProject", "mDiff", "mDiffFit", "mBackground"]:
             f.write("    profile pegasus \"clusters.size\" \"3\"\n")
@@ -341,8 +345,8 @@ def add_band(dax, band_id, center, degrees, survey, band, color):
         j.uses(corrected_area, link=Link.INPUT)
     dax.addJob(j)
 
-    # mJPEG - Make the JPEG for this channel
-    j = Job(name="mJPEG")
+    # mViewer - Make the JPEG for this channel
+    j = Job(name="mViewer")
     mosaic_jpg = File("%s-mosaic.jpg" %(band_id))
     j.uses(mosaic_fits, link=Link.INPUT)
     j.uses(mosaic_jpg, link=Link.OUTPUT, transfer=True)
@@ -359,8 +363,8 @@ def color_jpg(dax, red_id, green_id, blue_id):
     green_id = str(green_id)
     blue_id = str(blue_id)
 
-    # mJPEG - Make the JPEG for this channel
-    j = Job(name="mJPEG")
+    # mViewer - Make the JPEG for this channel
+    j = Job(name="mViewer")
     mosaic_jpg = File("mosaic-color.jpg")
     red_fits = File("%s-mosaic.fits" %(red_id))
     green_fits = File("%s-mosaic.fits" %(green_id))
